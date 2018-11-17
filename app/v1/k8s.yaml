@@ -31,7 +31,6 @@ items:
   spec:
     selector:
       app: hello-world
-  spec:
     ports:
       - port: 80
         targetPort: 8080
