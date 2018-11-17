@@ -8,7 +8,7 @@ items:
     spec:
       replicas: 10
       selector:
-        label:
+        labels:
           app: hello-world
           version: v1
       template:
