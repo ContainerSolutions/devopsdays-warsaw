@@ -39,9 +39,14 @@ items:
     name: hello-vs
   spec:
     hosts:
-    - "csd.cool"
+    - "*"
+    gateways:
+    - hello-gateway
     http:
-    - route:
+      - match:
+        - uri:
+          prefix: /
+      route:
       - destination:
           host: hello-world
           subset: v1
