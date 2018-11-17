@@ -20,6 +20,7 @@ items:
         containers:
           - name: hello
             image: gcr.io/devopsdays-warsaw-presentation/hello-world:v1
+            imagePullPolicy: Always
             ports:
               - containerPort: 80
 - kind: Service

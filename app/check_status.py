@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import requests
-r = requests.get("http://localhost:9090/api/v1/query", params={"query": 'sum(rate(istio_requests_total{destination_service="hello-world.default.svc.cluster.local"}[5m])) by (response_code, destination_version)'})
+r = requests.get("http://localhost:9090/api/v1/query", params={"query": 'sum(rate(istio_requests_total{destination_service="hello-world.default.svc.cluster.local"}[1m])) by (response_code, destination_version)'})
 
 results = r.json()["data"]["result"]
 version_a_200 = float([x for x in results if x["metric"]["destination_version"] == "v1" and x["metric"]["response_code"]=="200"][0]["value"][1])
