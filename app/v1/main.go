@@ -13,7 +13,7 @@ import (
 const (
 	Port = 80
 	Version = "v1"
-	ErrorRate float64 = 0.05
+	ErrorRate float64 = 0.01
 )
 
 type indexData struct {
