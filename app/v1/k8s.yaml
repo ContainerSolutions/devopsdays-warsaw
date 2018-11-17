@@ -45,7 +45,7 @@ items:
     http:
       - match:
         - uri:
-          prefix: /
+            prefix: /
       route:
       - destination:
           host: hello-world
