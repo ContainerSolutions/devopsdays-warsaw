@@ -50,3 +50,14 @@ items:
         - destination:
             host: hello-world
             subset: v1
+
+- kind: DestinationRule
+  apiVersion: networking.istio.io/v1alpha3
+  metadata:
+    name: hello-world
+  spec:
+    host: hello-world
+    subsets:
+    - name: v1
+      labels:
+        version: v1
