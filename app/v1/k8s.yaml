@@ -33,7 +33,6 @@ items:
       app: hello-world
     ports:
       - port: 80
-        targetPort: 8080
         name: http
 - kind: VirtualService
   apiVersion: networking.istio.io/v1alpha3
