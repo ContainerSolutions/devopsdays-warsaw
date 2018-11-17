@@ -8,10 +8,14 @@ items:
     spec:
       replicas: 10
       selector:
-        labels:
+        label:
           app: hello-world
           version: v1
       template:
+        metadata:
+            labels:
+              app: hello-world
+              version: v1
         containers:
           - name: hello
             image: gcr.io/devopsdays-warsaw-presentation/hello-world:v1
