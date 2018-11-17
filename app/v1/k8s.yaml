@@ -45,8 +45,8 @@ items:
     http:
       - match:
         - uri:
-            prefix: /
-      route:
-      - destination:
-          host: hello-world
-          subset: v1
+            prefix: "/"
+        route:
+        - destination:
+            host: hello-world
+            subset: v1
