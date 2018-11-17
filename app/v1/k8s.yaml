@@ -28,9 +28,9 @@ items:
     name: hello-world
     labels:
       app: hello-world
-    spec:
-      selector:
-        app: hello-world
+  spec:
+    selector:
+      app: hello-world
   spec:
     ports:
       - port: 80
