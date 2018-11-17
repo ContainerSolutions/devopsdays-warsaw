@@ -16,8 +16,9 @@ items:
             labels:
               app: hello-world
               version: v1
-        containers:
-          - name: hello
-            image: gcr.io/devopsdays-warsaw-presentation/hello-world:v1
-            ports:
-              - containerPort: 80
+        spec:
+          containers:
+            - name: hello
+              image: gcr.io/devopsdays-warsaw-presentation/hello-world:v1
+              ports:
+                - containerPort: 80
