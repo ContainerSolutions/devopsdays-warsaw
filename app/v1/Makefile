@@ -11,7 +11,7 @@ build:
 	@docker build -t ${NAME} .
 
 push:
-	@docker push ${NAME}:${TAG}
+	@docker push ${NAME}
 
 deploy:
 	kubectl apply -f k8s.yaml
