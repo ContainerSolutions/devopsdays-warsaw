@@ -8,8 +8,9 @@ items:
     spec:
       replicas: 10
       selector:
-        app: hello-world
-        version: v1
+        labels:
+          app: hello-world
+          version: v1
       template:
         containers:
           - name: hello
