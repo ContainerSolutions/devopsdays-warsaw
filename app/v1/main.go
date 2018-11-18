@@ -4,54 +4,53 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
-  "time"
-  "sync"
-  "math/rand"
+	"sync"
+	"time"
 )
 
 const (
-	Port = 80
-	Version = "v1"
+	Port              = 80
+	Version           = "v1"
 	ErrorRate float64 = 0.10
 )
 
 type indexData struct {
 	Hostname string
 	Version  string
-  ServedAt string
-  Success bool
+	ServedAt string
+	Success  bool
 }
 
-
 type predictableRandom struct {
-  sync.Mutex
-  rate float64
-  state float64
+	sync.Mutex
+	rate  float64
+	state float64
 }
 
 func (p *predictableRandom) Step() bool {
-  p.Lock()
-  defer p.Unlock()
+	p.Lock()
+	defer p.Unlock()
 
-  p.state += p.rate
+	p.state += p.rate
 
-  if p.state >= 1.0 {
-    p.state = 0.0
-    return true
-  }
+	if p.state >= 1.0 {
+		p.state = 0.0
+		return true
+	}
 
-  return false
+	return false
 }
 
-var random predictableRandom = predictableRandom {
-  rate: ErrorRate,
+var random predictableRandom = predictableRandom{
+	rate: ErrorRate,
 }
 
 func main() {
-  rand.Seed(time.Now().UnixNano())
-  random.state = rand.Float64() // initial randomness
+	rand.Seed(time.Now().UnixNano())
+	random.state = rand.Float64() // initial randomness
 
 	http.HandleFunc("/", indexHandler)
 
@@ -67,13 +66,13 @@ func indexHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, err.Error())
 	}
 
-  failure := (&random).Step()
+	failure := (&random).Step()
 
-	data := indexData {
+	data := indexData{
 		Hostname: hostname,
 		Version:  Version,
-    ServedAt: time.Now().Format(time.StampMilli),
-    Success: !failure,
+		ServedAt: time.Now().Format(time.StampMilli),
+		Success:  !failure,
 	}
 
 	tpl, err := template.New("index").Parse(tplIndex)
@@ -81,22 +80,22 @@ func indexHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, err.Error())
 	}
 
-  var statusCode int
+	var statusCode int
 
-  if data.Success {
-    statusCode = 200
-  } else {
-    statusCode = 500
-  }
+	if data.Success {
+		statusCode = 200
+	} else {
+		statusCode = 500
+	}
 
-  log.Printf("returned %d", statusCode)
+	log.Printf("returned %d", statusCode)
 
-  res.WriteHeader(statusCode)
+	res.WriteHeader(statusCode)
 
 	tpl.Execute(res, data)
 }
 
-var	tplIndex = `
+var tplIndex = `
 <html>
   <head>
     <title>Hello, Docker!</title>
