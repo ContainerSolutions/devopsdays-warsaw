@@ -17,7 +17,7 @@ items:
         route:
         - destination:
             host: hello-world
-            subset: v2
+            subset: v3
           weight: 100
 - kind: DestinationRule
   apiVersion: networking.istio.io/v1alpha3
