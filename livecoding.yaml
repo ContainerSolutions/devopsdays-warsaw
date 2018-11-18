@@ -1,0 +1,115 @@
+steps:
+#  - cmd: "echo 'hello world'"
+#  - cmd: "echo 'hello world again'"
+#  - cmd: "sleep 10; echo 'hello world again'"
+
+### SETUP K8S AND ISTIO
+- skip: true
+  cmd: |
+    # Before you start ensure that the compute & container API's have been enabled for this project.
+    gcloud services enable compute.googleapis.com container.googleapis.com
+- cmd: "gcloud config set compute/zone europe-west4"
+
+# This is expected to take +/- 3 minutes
+- cmd: |
+    time gcloud container clusters create warsaw \
+    --cluster-version 1.10 \
+    --num-nodes 3 \
+    --machine-type n1-standard-2 \
+    --scopes cloud-platform
+- cmd: "curl -L https://github.com/istio/istio/releases/download/1.0.3/istio-1.0.3-linux.tar.gz | tar -xz"
+  description: "Download Istio"
+- cmd: "ln -s istio-1.0.3 istio"
+- cmd: "mkdir -p ~/.bin/"
+- cmd: "curl -s -L https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz | tar xzv -C ~/.bin linux-amd64/helm --strip-components=1"
+- cmd: "export PATH=$PATH:~/.bin"
+- cmd: |
+   helm template istio/install/kubernetes/helm/istio \
+     --namespace istio-system \
+     --set grafana.enabled=true \
+     > ./istio.yaml
+
+- cmd: "kubectl create ns istio-system"
+- cmd: "kubectl apply -f istio.yaml --as=admin --as-group=system:masters"
+
+  #- cmd: "kubectl apply -f istio/install/kubernetes/helm/istio/templates/crds.yaml && kubectl apply -f istio/install/kubernetes/istio-demo.yaml --as=admin --as-group=system:masters"
+  time: 3 minutes
+  description: |
+    Will install a lot;
+    1. Istio CRD's
+    2. Istio control plane, RBAC, prometheus & graphana
+    3. Automatic side-car injection for the Envoy proxy
+- cmd: "watch kubectl get pods -n istio-system"
+
+# Enable side-car injection
+- cmd: "kubectl label namespace default istio-injection=enabled"
+
+#### DONE WITH CLUSTER SETUP!
+
+# Build app & make it available through istio to the public internet
+- cmd: "git clone https://github.com/ContainerSolutions/devopsdays-warsaw"
+- cmd: "kubectl apply -f devopsdays-warsaw/istio/gateway.yaml"
+
+ #- cmd: "gcloud auth configure-docker"
+
+# Build app
+- cmd: "cd devopsdays-warsaw/app/v1"
+- cmd: "ls"
+- cmd: "cat Dockerfile"
+- cmd: "head -n 18 main.go"
+- cmd: "make build push deploy"
+- cmd: "export INGRESS_IP=$(kubectl get svc istio-ingressgateway -n istio-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+- cmd: "echo $INGRESS_IP"
+
+- cmd: "curl http://$INGRESS_IP"
+# NEED YOUR HELP!
+- cmd: "~/devopsdays-warsaw/tools/update_web_forward.sh http://$INGRESS_IP"
+- cmd: "curl http://csd.cool"
+
+# Port forward to prometheus in different tab
+- cmd: "#tmux magic"
+- cmd: "kubectl port-forward svc/prometheus 9090:9090 -n istio-system"
+- cmd: 'sum(rate(istio_requests_total{destination_service="hello-world.default.svc.cluster.local"}[1m])) by (response_code, destination_version)'
+
+# Force traffic in different tab
+- cmd: "#tmux magic!"
+
+- cmd: "export INGRESS_IP=$(kubectl get svc istio-ingressgateway -n istio-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+- cmd: "while true; do date; sleep 0.5; curl -v http://$INGRESS_IP >/dev/null; done"
+
+- cmd: "cd ../v2"
+- cmd: "make build push deploy_5_percent"
+- cmd: "make check"
+- cmd: "make abort"
+
+- cmd: "cd ../v3"
+
+- cmd: "make build push deploy_5_percent"
+- cmd: "make check"
+
+- cmd: "make deploy_50_percent"
+- cmd: "make check"
+
+- cmd: "make deploy_100_percent"
+- cmd: "make check"
+
+#### PREPARE ENVIRONMENT
+## Install Helm & Jenkins-X
+#- cmd: "mkdir -p ~/.bin/"
+#- cmd: "curl -s -L https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz | tar xzv -C ~/.bin linux-amd64/helm --strip-components=1"
+#- cmd: "export PATH=$PATH:~/.bin"
+#- cmd: "curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.571/jx-linux-amd64.tar.gz | tar xzv -C ~/.bin"
+#- cmd: "echo 'export PATH=$PATH:~/.bin/bin' >> ~/.bashrc"
+#
+#### Install 
+#- cmd: "kubectl --namespace kube-system create sa tiller"
+#- cmd: "kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller"
+#- cmd: "helm init --service-account tiller"
+#- cmd: "watch kubectl get deploy,svc tiller-deploy -n kube-system"
+#
+#### CREATE APP WITH JENKINS X
+#- cmd: "jx edit addon gitea -e true"
+#
+## Git clone demo repository
+
+### DEPLOY FIRST VERSION.

@@ -1,0 +1,5 @@
+- Hello / quick jab
+- Create cluster
+- Introduce CN
+- Canary Deployments with Istio & Prometheus slide =>
+  install istio/prometheus.

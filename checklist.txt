@@ -1,0 +1,3 @@
+- Disk free on vps?
+- cluster deleted
+- keyboard.py & floater started 
