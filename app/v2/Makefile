@@ -2,12 +2,13 @@ IMG := gcr.io/devopsdays-warsaw-presentation/hello-world
 TAG := v2
 NAME := ${IMG}:${TAG}
 
-buildpush: build push
-
 main.go: ../v1/main.go
 	sed 's/Version = "v1"/Version = "v2"/;s/ErrorRate float64 = 0.10/ErrorRate float64 = 0.5/' < ../v1/main.go > main.go
 
-build: main.go
+Dockerfile: ../v1/Dockerfile
+	cp ../v1/Dockerfile .
+
+build: main.go Dockerfile
 	@docker build -t ${NAME} .
 
 push:

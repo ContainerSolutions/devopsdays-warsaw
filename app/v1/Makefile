@@ -2,9 +2,7 @@ IMG := gcr.io/devopsdays-warsaw-presentation/hello-world
 TAG := v1
 NAME := ${IMG}:${TAG}
 
-buildpush: build push
-
-run:
+run: build
 	docker run --rm -it -p 4321:80 ${NAME}
 
 build:
