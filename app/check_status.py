@@ -13,14 +13,12 @@ r = requests.get("http://localhost:9090/api/v1/query", params={"query": 'sum(rat
 results = r.json()["data"]["result"]
 
 version_a_200 = float([x for x in results if x["metric"]["destination_version"] == version_a and x["metric"]["response_code"]=="200"][0]["value"][1])
-version_a_500 = float([x for x in results if x["metric"]["destination_version"] == version_a and x["metric"]["response_code"]=="500"][0]["value"][1])
-version_a_total = version_a_200 + version_a_500
-error_rate_a = version_a_500 / version_a_total
+version_a_total = sum([float(x["value"][1]) for x in results if x["metric"]["destination_version"] == version_a)
+ok_rate_a = version_a_200 / version_a_total
 
 version_b_200 = float([x for x in results if x["metric"]["destination_version"] == version_b and x["metric"]["response_code"]=="200"][0]["value"][1])
-version_b_500 = float([x for x in results if x["metric"]["destination_version"] == version_b and x["metric"]["response_code"]=="500"][0]["value"][1])
-version_b_total = version_a_200 + version_a_500
-error_rate_b = version_b_500 / version_b_total
+version_b_total = sum([float(x["value"][1]) for x in results if x["metric"]["destination_version"] == version_b)
+ok_rate_b = version_a_200 / version_a_total
 
-print("ERROR RATE", version_a, "is", error_rate_a)
-print("ERROR RATE", version_b, "is", error_rate_b)
+print("OK RATE", version_a, "is", ok_rate_a)
+print("OK RATE", version_b, "is", ok_rate_b)
