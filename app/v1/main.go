@@ -6,14 +6,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-  "math/rand"
   "time"
+  "sync"
+  "math/rand"
 )
 
 const (
 	Port = 80
 	Version = "v1"
-	ErrorRate float64 = 0.05
+	ErrorRate float64 = 0.10
 )
 
 type indexData struct {
@@ -23,8 +24,34 @@ type indexData struct {
   Success bool
 }
 
+
+type predictableRandom struct {
+  sync.Mutex
+  rate float64
+  state float64
+}
+
+func (p *predictableRandom) Step() bool {
+  p.Lock()
+  defer p.Unlock()
+
+  p.state += p.rate
+
+  if p.state >= 1.0 {
+    p.state = 0.0
+    return true
+  }
+
+  return false
+}
+
+var random predictableRandom = predictableRandom {
+  rate: ErrorRate,
+}
+
 func main() {
   rand.Seed(time.Now().UnixNano())
+  random.state = rand.Float64() // initial randomness
 
 	http.HandleFunc("/", indexHandler)
 
@@ -40,11 +67,13 @@ func indexHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(res, err.Error())
 	}
 
+  failure := (&random).Step()
+
 	data := indexData {
 		Hostname: hostname,
 		Version:  Version,
     ServedAt: time.Now().Format(time.StampMilli),
-    Success: rand.Float64() > ErrorRate,
+    Success: !failure,
 	}
 
 	tpl, err := template.New("index").Parse(tplIndex)

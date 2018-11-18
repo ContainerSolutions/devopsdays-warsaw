@@ -5,13 +5,15 @@ NAME := ${IMG}:${TAG}
 buildpush: build push
 
 run:
-	@docker run --rm -it -p 4321:80 ${NAME}
+	docker run --rm -it -p 4321:80 ${NAME}
 
 build:
-	@docker build -t ${NAME} .
+	docker build -t ${NAME} .
 
 push:
-	@docker push ${NAME}
+	docker push ${NAME}
 
 deploy:
-	kubectl apply -f k8s.yaml
+	kubectl apply -f replicaset.yaml
+	kubectl apply -f service.yaml
+	kubectl apply -f istio.yaml
