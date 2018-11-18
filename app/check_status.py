@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import requests
 import sys
-import os
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print("Usage: check_status.py <version A> <version B>")
-    os.exit(1)
+    sys.exit(1)
 
-version_a = sys.argv[0]
-version_b = sys.argv[1]
+version_a = sys.argv[1]
+version_b = sys.argv[2]
 
 r = requests.get("http://localhost:9090/api/v1/query", params={"query": 'sum(rate(istio_requests_total{destination_service="hello-world.default.svc.cluster.local"}[1m])) by (response_code, destination_version)'})
 results = r.json()["data"]["result"]
