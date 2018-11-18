@@ -23,5 +23,9 @@ ok_rate_b = version_b_200 / version_b_total
 ok_percentage_a = int(ok_rate_a * 100 * 100) / 100
 ok_percentage_b = int(ok_rate_b * 100 * 100) / 100
 
-print("OK RATE", version_a, "is", ok_percentage_a)
-print("OK RATE", version_b, "is", ok_percentage_b)
+total_rate = version_a_total + version_b_total
+serving_a_percentage = int((version_a_total / total_rate) * 100 * 100) / 100
+serving_b_percentage = int((version_b_total / total_rate) * 100 * 100) / 100
+
+print("OK RATE", version_a, "is", ok_percentage_a, "serving", serving_a_percentage)
+print("OK RATE", version_b, "is", ok_percentage_b, "serving", serving_b_percentage)
