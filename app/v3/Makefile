@@ -8,14 +8,14 @@ main.go: ../v1/main.go
 Dockerfile: ../v1/Dockerfile
 	cp ../v1/Dockerfile .
 
-build: main.go
+build: main.go Dockerfile
 	@docker build -t ${NAME} .
 
 push:
 	@docker push ${NAME}
 
 replicaset.yaml:
-	sed 's/v1/v2/' < ../v1/replicaset.yaml > replicaset.yaml
+	sed 's/version: v1/version: v3/;s/hello-world:v1/hello-world:v3/;s/hello-world-v1/hello-world-v3/' < ../v1/replicaset.yaml > replicaset.yaml
 
 deploy_5_percent: replicaset.yaml
 	kubectl apply -f replicaset.yaml
