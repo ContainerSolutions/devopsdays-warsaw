@@ -15,7 +15,7 @@ push:
 	@docker push ${NAME}
 
 replicaset.yaml:
-	sed 's/version: v1/version: v2/;s/hello-world:v1/hello-world:v2/' < ../v1/replicaset.yaml > replicaset.yaml
+	sed 's/version: v1/version: v2/;s/hello-world:v1/hello-world:v2/;s/hello-world-v1/hello-world-v2/' < ../v1/replicaset.yaml > replicaset.yaml
 
 deploy_5_percent: replicaset.yaml
 	kubectl apply -f replicaset.yaml
