@@ -16,6 +16,11 @@ version_a_200 = float([x for x in results if x["metric"]["destination_version"] 
 version_a_total = sum([float(x["value"][1]) for x in results if x["metric"]["destination_version"] == version_a])
 ok_rate_a = version_a_200 / version_a_total
 
+if version_a_total > 0:
+    ok_rate_a = version_a_200 / version_a_total
+else:
+    ok_rate_a = 0.0
+
 version_b_200 = float([x for x in results if x["metric"]["destination_version"] == version_b and x["metric"]["response_code"]=="200"][0]["value"][1])
 version_b_total = sum([float(x["value"][1]) for x in results if x["metric"]["destination_version"] == version_b])
 if version_b_total > 0:
