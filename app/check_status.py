@@ -20,5 +20,8 @@ version_b_200 = float([x for x in results if x["metric"]["destination_version"] 
 version_b_total = sum([float(x["value"][1]) for x in results if x["metric"]["destination_version"] == version_b])
 ok_rate_b = version_b_200 / version_b_total
 
-print("OK RATE", version_a, "is", ok_rate_a)
-print("OK RATE", version_b, "is", ok_rate_b)
+ok_percentage_a = int(ok_rate_a * 100 * 100) / 100
+ok_percentage_b = int(ok_rate_b * 100 * 100) / 100
+
+print("OK RATE", version_a, "is", ok_percentage_a)
+print("OK RATE", version_b, "is", ok_percentage_b)
