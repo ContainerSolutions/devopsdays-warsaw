@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import requests
+import sys
+import os
 
 if len(sys.argv) != 2:
     print("Usage: check_status.py <version A> <version B>")
