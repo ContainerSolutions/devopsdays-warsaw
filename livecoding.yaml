@@ -57,7 +57,11 @@ steps:
 - cmd: "ls"
 - cmd: "cat Dockerfile"
 - cmd: "head -n 18 main.go"
-- cmd: "make build push deploy"
+- cmd: "make build push"
+- cmd: "tput reset; cat replicaset.yaml"
+- cmd: "tput reset; cat service.yaml"
+- cmd: "tput reset; cat istio.yaml"
+- cmd: "make deploy"
 - cmd: "export INGRESS_IP=$(kubectl get svc istio-ingressgateway -n istio-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 - cmd: "echo $INGRESS_IP"
 
@@ -78,38 +82,22 @@ steps:
 - cmd: "while true; do date; sleep 0.5; curl -v http://$INGRESS_IP >/dev/null; done"
 
 - cmd: "cd ../v2"
-- cmd: "make build push deploy_5_percent"
+- cmd: "make build push"
+- cmd: "tput reset; cat istio-try-5-percent.yaml"
+- cmd: "make deploy_5_percent"
 - cmd: "make check"
 - cmd: "make abort"
 
 - cmd: "cd ../v3"
 
-- cmd: "make build push deploy_5_percent"
+- cmd: "make build push"
+- cmd: "make deploy_5_percent"
 - cmd: "make check"
 
+- cmd: "tput reset; cat istio-try-50-percent.yaml"
 - cmd: "make deploy_50_percent"
 - cmd: "make check"
 
+- cmd: "tput reset; cat istio-100-percent.yaml"
 - cmd: "make deploy_100_percent"
 - cmd: "make check"
-
-#### PREPARE ENVIRONMENT
-## Install Helm & Jenkins-X
-#- cmd: "mkdir -p ~/.bin/"
-#- cmd: "curl -s -L https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz | tar xzv -C ~/.bin linux-amd64/helm --strip-components=1"
-#- cmd: "export PATH=$PATH:~/.bin"
-#- cmd: "curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.571/jx-linux-amd64.tar.gz | tar xzv -C ~/.bin"
-#- cmd: "echo 'export PATH=$PATH:~/.bin/bin' >> ~/.bashrc"
-#
-#### Install 
-#- cmd: "kubectl --namespace kube-system create sa tiller"
-#- cmd: "kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller"
-#- cmd: "helm init --service-account tiller"
-#- cmd: "watch kubectl get deploy,svc tiller-deploy -n kube-system"
-#
-#### CREATE APP WITH JENKINS X
-#- cmd: "jx edit addon gitea -e true"
-#
-## Git clone demo repository
-
-### DEPLOY FIRST VERSION.
