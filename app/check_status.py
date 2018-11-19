@@ -41,5 +41,5 @@ if version_b_total > 0:
 else:
     serving_b_percentage = 0.0
 
-print("OK RATE", version_a, "is", ok_percentage_a, "serving", serving_a_percentage)
-print("OK RATE", version_b, "is", ok_percentage_b, "serving", serving_b_percentage)
+print("OK RATE", version_a, "is", ok_percentage_a, "serving", serving_a_percentage, "percent of traffic")
+print("OK RATE", version_b, "is", ok_percentage_b, "serving", serving_b_percentage, "percent of traffic")
