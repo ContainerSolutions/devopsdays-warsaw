@@ -62,6 +62,7 @@ steps:
 - cmd: "tput reset; cat service.yaml"
 - cmd: "tput reset; cat istio.yaml"
 - cmd: "make deploy"
+- cmd: "watch kubectl get pods"
 - cmd: "export INGRESS_IP=$(kubectl get svc istio-ingressgateway -n istio-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 - cmd: "echo $INGRESS_IP"
 
@@ -85,6 +86,7 @@ steps:
 - cmd: "make build push"
 - cmd: "tput reset; cat istio-try-5-percent.yaml"
 - cmd: "make deploy_5_percent"
+- cmd: "watch kubectl get pods"
 - cmd: "make check"
 - cmd: "make abort"
 
@@ -92,6 +94,7 @@ steps:
 
 - cmd: "make build push"
 - cmd: "make deploy_5_percent"
+- cmd: "watch kubectl get pods"
 - cmd: "make check"
 
 - cmd: "tput reset; cat istio-try-50-percent.yaml"
